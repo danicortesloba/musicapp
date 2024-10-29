@@ -3,10 +3,31 @@ import { useState} from "react";
 import propTypes from 'prop-types';
 import { Link } from "react-router-dom";
 
+
+
 const SongLibrary = ({songs, setSongs} ) => {
     const initialSong = {title: '', artist: '', genre: '', year: ''};
     const [song, setSong] = useState(initialSong);
-
+    const [serverErrors, setServerErrors] = useState({});
+    const [clientError, setClientError] = useState("");
+    const [fieldsComplete, setFieldsComplete] = useState(false)
+ 
+    const validateForm = () => {
+        let formErrors = "";
+        if (!song.title) {
+            formErrors += ' El campo titulo es obligatorio';
+        }
+        if (!song.artist) {
+            formErrors += ' El campo artista es obligatorio';
+        }
+        if (!song.genre) {
+            formErrors += ' El campo genero es obligatorio';
+        }
+        if (!song.year) {
+            formErrors += 'El campo año es obligatorio';
+        }
+        setClientError(formErrors);
+    }
 
 const deleteSong = async (title) => {
     try {
@@ -15,24 +36,36 @@ const deleteSong = async (title) => {
         setSongs(updatedSongs);
     } catch (error) {
         console.error('¡Hubo un error al borrar la cancion!', error);
-    }
+}
 }
 
 const manageChange = (e) => {
+    if (song.title !== "" && song.artist !== "" && song.genre !== "" && song.year !== "") {
+        setFieldsComplete(true)
+    } else {
+        setFieldsComplete(false)
+    }
     const {name, value} = e.target
     setSong({ ...song, [name]: value })
 }
 
 const submitSong = async (e) => {
     e.preventDefault();
+    validateForm();
+    if (clientError !== "" || !fieldsComplete) {
+        return;
+    } else {
     try {
-        console.log
         const { data } = await axios.post('/api/songs', song);
         setSongs([...songs, data]);
         setSong(initialSong);
+        setClientError("")
+        setServerErrors({});
     } catch (error) {
-        console.error('¡Hubo un error al crear la cancion!', error);
+        setServerErrors(error)
+        console.log(serverErrors.response.data.message)
     }
+}
 }
 
     return (
@@ -62,7 +95,9 @@ const submitSong = async (e) => {
                 <input className="field" type="text" name="genre" id="genre" onChange={manageChange} value={song.genre} />
                 <label htmlFor="year">Año:</label>
                 <input className="field" type="number" name="year" id="year" onChange={manageChange} value={song.year} />
-                <button className="button" type="submit">Agregar cancion</button>
+                <button className="button"  type="submit"  disabled={!fieldsComplete || clientError ==! ""}>Agregar cancion</button>
+                {clientError !== "" ? <p>{clientError}</p> : null }
+                {clientError === "" && serverErrors ? <p>{serverErrors?.response?.data?.message}</p> : null }
 
             </form>
             

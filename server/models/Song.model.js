@@ -4,14 +4,14 @@ const SongSchema = new Schema({
     title: {
         type: String,
         required: [true, "¡El título es obligatorio!"],
-        maxlength: 255,
-        minlength: 6
+        maxlength: [255, "¡El título puede tener un maximo de 255 caracteres!"],
+        minlength: [6, "¡El título debe tener minimo 6 caracteres!"] //6
     },
     artist: {
         type: String,
         required: [true, "¡El artista es obligatorio!"],
-        maxlength: 255,
-        minlength: 10
+        maxlength: [255, "¡El artista puede tener un maximo de 255 caracteres!"],
+        minlength: [10, "¡El artista debe tener minimo 10 caracteres!"]
     },
     genre: 
     {type: String,
@@ -20,8 +20,8 @@ const SongSchema = new Schema({
     year:{
         type: Number,
         required: [true, "¡El año es obligatorio!"],
-        min: 1900,
-        max: 2024
+        min: [1900, "¡El año debe ser igual o mayor a 1900!"],
+        max: [2024, "¡El año debe ser igual o menor a 2024!"]
     } 
 }, { timestamps: true });
 

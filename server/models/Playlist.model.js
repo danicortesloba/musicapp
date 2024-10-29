@@ -6,14 +6,14 @@ const PlaylistSchema = new Schema({
     title: {
         type: String,
         required: [true, "¡El título es obligatorio!"],
-        maxlength: 255,
-        minlength: 6
+        maxlength: [255, "¡El nombre puede tener un maximo de 255 caracteres!"],
+        minlength: [6, "¡El nombre debe tener minimo 6 caracteres!"]
     },
     user: {
         type: String,
         required: [true, "¡El usuario es obligatorio!"],
-        maxlength: 255,
-        minlength: 6
+        maxlength: [255, "¡El usuario puede tener un maximo de 255 caracteres!"],
+        minlength: [6,"¡El usuario debe tener minimo 6 caracteres!"]
     },
     genre: 
     {type: String,

@@ -94,3 +94,8 @@
     box-shadow: 3px 3px 5px grey;
     background-color: lightgreen;
 }
+
+.disabled {
+    background-color: grey;
+    cursor: not-allowed;
+}

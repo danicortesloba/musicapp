@@ -41,6 +41,13 @@ const getSongByFilter = async (req, res) => {
 const updateSong = async (req, res) => {
     try {
         const updatedSong = await Song.findOneAndUpdate({ _id: req.params.id}, req.body, { new: true });
+        
+        if (!updatedSong) {
+            const error = new Error('Canción no encontrada');
+            error.statusCode = 404;
+            throw error;
+          }
+        
         res.json(updatedSong);
     } catch (error) {
         res.status(500).json({ message: error.message });
