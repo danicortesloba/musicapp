@@ -14,6 +14,7 @@ const PlaylistDetail = ({playlists, songs}) => {
 
    const [playlist, setPlaylist] = useState(currentPlaylist[0])
    const [selected, setSelected] = useState([]);
+   const [error, setError] = useState([]);
 
     
 
@@ -23,7 +24,8 @@ const addSongs = async (e) => {
         const { data } = await axios.patch(`/api/playlists/modify/${playlist._id}`, selected);
         console.log(data)
     } catch (error) {
-        console.error('¡Hubo un error al crear la playlist!', error);
+        console.log(error)
+        setError(error.response.data.message || "Algo salio mal");
     }
 }
 
@@ -35,7 +37,8 @@ const deleteSong = (song) => async (e) => {
         await axios.patch(`/api/playlists/update/${playlist._id}`, playlist);
         playlists[objIndex]= playlist
     } catch (error) {
-        console.error('¡Hubo un error al borrar la cancion!', error);
+        console.log(error)
+        setError(error.response.data.message || "Algo salio mal");
     }
 }
 
@@ -54,7 +57,8 @@ const updatePlaylist = async (e) => {
         playlists[objIndex]= data
         console.log("data", data)
     } catch (error) {
-        console.error('¡Hubo un error al actualizar la playlist!', error);
+        console.log(error)
+        setError(error.response.data.message || "Algo salio mal");
     }
 }
 
@@ -105,6 +109,7 @@ const updatePlaylist = async (e) => {
         <Options setPlaylist={setPlaylist} songs={songs} playlist={playlist} setSelected={setSelected} selected={selected}/>
         <button type="submit">Agregar</button>
         </form>
+        {error && <p>{error}</p>}
         </>
     )       
 }   

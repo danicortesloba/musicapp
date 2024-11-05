@@ -2,10 +2,14 @@ import axios from "axios";
 import { useState} from "react";
 import propTypes from 'prop-types';
 import { Link } from "react-router-dom";
+import { useContext } from "react";
+import { LoginContext } from "../contexts/LoginContext";
 
 
 
 const SongLibrary = ({songs, setSongs} ) => {
+    const {user} = useContext(LoginContext)
+    console.log("user", user)
     const initialSong = {title: '', artist: '', genre: '', year: ''};
     const [song, setSong] = useState(initialSong);
     const [serverErrors, setServerErrors] = useState({});
@@ -35,6 +39,7 @@ const deleteSong = async (title) => {
         const updatedSongs = songs.filter((song) => song.title !== title);
         setSongs(updatedSongs);
     } catch (error) {
+        console.log(error)
         console.error('¡Hubo un error al borrar la cancion!', error);
 }
 }

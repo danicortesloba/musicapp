@@ -3,13 +3,20 @@ import {  useState } from "react";
 import propTypes from 'prop-types';
 import {Link} from "react-router-dom";
 import Options from "./Options";
+import { useContext } from "react";
+import { LoginContext } from "../contexts/LoginContext";
+
 const PlaylistLibrary = ({playlists, setPlaylists, songs}) => {
+    const { user } = useContext(LoginContext)
+    const [error, setError] = useState([]);
+    
 
     const [playlist, setPlaylist] = useState({
     title: '',
     genre: '',
-    user: '',
+    user:  '',
     songs: [],
+    creator: user.id
     })
 
 
@@ -19,7 +26,8 @@ const PlaylistLibrary = ({playlists, setPlaylists, songs}) => {
             const updatedPlaylists = playlists.filter((playlist) => playlist.title !== title);
             setPlaylists(updatedPlaylists);
         } catch (error) {
-            console.error('¡Hubo un error al borrar la playlist!', error);
+            console.log(error)
+            setError(error.response.data.message || "Algo salio mal");
         }
     }
 
@@ -29,6 +37,10 @@ const PlaylistLibrary = ({playlists, setPlaylists, songs}) => {
             ...prevPlaylist,
             [name]: value,
         }));
+        setPlaylist((prevPlaylist) => ({
+            ...prevPlaylist,
+            creator: user.id
+        }))
     };
 
     const submitPlaylist = async (e) => {
@@ -37,7 +49,8 @@ const PlaylistLibrary = ({playlists, setPlaylists, songs}) => {
             await axios.post('/api/playlists', playlist);
             setPlaylists([...playlists, playlist]);
         } catch (error) {
-            console.error('¡Hubo un error al crear la playlist!', error);
+            console.log(error)
+            setError(error.response.data.message || "Algo salio mal");
         }
     };
 
@@ -57,9 +70,12 @@ const PlaylistLibrary = ({playlists, setPlaylists, songs}) => {
                             ))}
 
                             </ul>
-                            
+                            {user.id === playlist.creator &&
+                            <div>
                             <button onClick={() => deletePlaylist(playlist.title)}>Borrar</button>
                             <button><Link to={`/playlist/modify/${playlist._id}`}>Agregar canción</Link></button>
+                            </div>
+                            }
                         </div>
                     ))}
                 </div>
@@ -103,6 +119,8 @@ const PlaylistLibrary = ({playlists, setPlaylists, songs}) => {
                 <button className="button" type="submit">Submit</button>
 
             </form>
+
+            {error && <p>{error}</p>}
 
         </div>
     )

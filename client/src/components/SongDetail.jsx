@@ -3,12 +3,14 @@ import { useParams } from "react-router-dom";
 import { useState } from "react";
 import axios from "axios";
 
+
 const SongDetail = ({ songs }) => {
     const { id } = useParams();
     const currentSong = songs.filter((s) => s._id === id)
     const objIndex = songs.findIndex(obj => obj._id == id);
 
     const [song, setSong] = useState(currentSong[0]);
+    const [error, setError] = useState([]);
    
         const handleChange = (e) => {
         const { name, value } = e.target
@@ -24,7 +26,8 @@ const SongDetail = ({ songs }) => {
             setSong(data);
             songs[objIndex]= data
         } catch (error) {
-            console.error('¡Hubo un error al actualizar la cancion!', error);
+            console.log(error)
+            setError(error.response.data.message || "Algo salio mal");
         }
     }
     return (
@@ -70,6 +73,7 @@ const SongDetail = ({ songs }) => {
                     placeholder="Nuevo año"
                 />
                 <button className="btn" type="submit">Actualizar canción</button>
+                {error && <p>{error}</p>}
         </form>
     )
 }
